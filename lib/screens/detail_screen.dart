@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:contactsapp_provider/components/action_loader.dart';
+import 'package:contactsapp_provider/components/info_box.dart';
 import 'package:flutter/material.dart';
 import '../model/contact.dart';
 
@@ -19,8 +23,8 @@ class _DetailScreenState extends State<DetailScreen> {
   TextEditingController lastNameCntrl = TextEditingController();
   TextEditingController phoneNumberCntrl = TextEditingController();
   TextEditingController emailCntrl = TextEditingController();
-  Icon isNotFavIcon = Icon(Icons.favorite_border);
-  Icon isFavIcon = Icon(Icons.favorite);
+  Icon isNotFavIcon = const Icon(Icons.favorite_border);
+  Icon isFavIcon = const Icon(Icons.favorite);
   late Icon icon;
 
   @override
@@ -60,18 +64,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     },
                   ),
                   TextButton(
-                    onPressed: () {
-                      Contact updatedContact = Contact(
-                        id: widget.contact.id,
-                        firstName: firstNameCntrl.text,
-                        lastName: lastNameCntrl.text,
-                        phoneNumber: phoneNumberCntrl.text,
-                        emailId: emailCntrl.text,
-                        isFav: icon == isFavIcon ? true : false,
-                      );
-                      widget.onEdit(updatedContact);
-                      Navigator.pop(context);
-                    },
+                    onPressed: onContactEdit,
                     child: const Text(
                       "Save",
                       style: TextStyle(color: Colors.white),
@@ -83,65 +76,145 @@ class _DetailScreenState extends State<DetailScreen> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: CircleAvatar(
-                  radius: 50,
-                  child: Text(
-                    (widget.contact.firstName[0] + widget.contact.lastName[0])
-                        .toUpperCase(),
-                    style: const TextStyle(
-                        fontSize: 30, fontWeight: FontWeight.bold),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          TextEditingController().clear();
+        },
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: CircleAvatar(
+                    radius: 50,
+                    child: Text(
+                      (widget.contact.firstName[0] + widget.contact.lastName[0])
+                          .toUpperCase(),
+                      style: const TextStyle(
+                          fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-              const Text(
-                "First Name: ",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              TextFormField(
-                controller: firstNameCntrl,
-              ),
-              const SizedBox(height: 30),
-              const Text(
-                "Last Name: ",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              TextFormField(
-                controller: lastNameCntrl,
-              ),
-              const SizedBox(height: 30),
-              const Text(
-                "Phone Number: ",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              TextFormField(
-                controller: phoneNumberCntrl,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 30),
-              const Text(
-                "Email: ",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              TextFormField(
-                controller: emailCntrl,
-                keyboardType: TextInputType.emailAddress,
-              )
-            ],
+                const SizedBox(height: 30),
+                const Text(
+                  "First Name: ",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                TextFormField(
+                  controller: firstNameCntrl,
+                  textCapitalization: TextCapitalization.words,
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  "Last Name: ",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                TextFormField(
+                  controller: lastNameCntrl,
+                  textCapitalization: TextCapitalization.words,
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  "Phone Number: ",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                TextFormField(
+                  controller: phoneNumberCntrl,
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  "Email: ",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                TextFormField(
+                  controller: emailCntrl,
+                  keyboardType: TextInputType.emailAddress,
+                )
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void onContactEdit() {
+    if (firstNameCntrl.text.isEmpty &&
+        phoneNumberCntrl.text.isEmpty &&
+        emailCntrl.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [
+              InfoBox(fieldName: "Contact, fields are empty"),
+            ],
+          );
+        },
+      );
+    } else if (phoneNumberCntrl.text.length != 10 &&
+        !emailCntrl.text.contains('@') &&
+        !emailCntrl.text.contains(".")) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [InfoBox(fieldName: "Phone Number and Email ID")],
+          );
+        },
+      );
+    } else if (phoneNumberCntrl.text.length != 10) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [InfoBox(fieldName: "Phone Number")],
+          );
+        },
+      );
+    } else if (!emailCntrl.text.contains('@') &&
+        !emailCntrl.text.contains(".")) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [InfoBox(fieldName: "Email ID")],
+          );
+        },
+      );
+    } else {
+      Contact updatedContact = Contact(
+        id: widget.contact.id,
+        firstName: firstNameCntrl.text,
+        lastName: lastNameCntrl.text,
+        phoneNumber: phoneNumberCntrl.text,
+        emailId: emailCntrl.text,
+        isFav: icon == isFavIcon ? true : false,
+      );
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [ActionLoader()],
+          );
+        },
+      );
+      Timer(
+        const Duration(seconds: 2),
+        () {
+          widget.onEdit(updatedContact);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        },
+      );
+    }
   }
 }

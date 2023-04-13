@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import '../components/action_loader.dart';
+import '../components/info_box.dart';
 import '../model/contact.dart';
 
 class AddContactScreen extends StatefulWidget {
@@ -54,18 +58,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                     },
                   ),
                   TextButton(
-                    onPressed: () {
-                      Contact addedContact = Contact(
-                        id: widget.contactLength + 1,
-                        firstName: firstNameCntrl.text,
-                        lastName: lastNameCntrl.text,
-                        phoneNumber: phoneNumberCntrl.text,
-                        emailId: emailCntrl.text,
-                        isFav: icon == isFavIcon ? true : false,
-                      );
-                      widget.onAdd(addedContact);
-                      Navigator.of(context).pop(addedContact);
-                    },
+                    onPressed: onAddContact,
                     child: const Text(
                       "Save",
                       style: TextStyle(color: Colors.white),
@@ -125,5 +118,77 @@ class _AddContactScreenState extends State<AddContactScreen> {
         ),
       ),
     );
+  }
+
+  void onAddContact() {
+    if (firstNameCntrl.text.isEmpty &&
+        phoneNumberCntrl.text.isEmpty &&
+        emailCntrl.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [
+              InfoBox(fieldName: "Contact, fields are empty"),
+            ],
+          );
+        },
+      );
+    } else if (phoneNumberCntrl.text.length != 10 &&
+        !emailCntrl.text.contains('@') &&
+        !emailCntrl.text.contains(".")) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [InfoBox(fieldName: "Phone Number and Email ID")],
+          );
+        },
+      );
+    } else if (phoneNumberCntrl.text.length != 10) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [InfoBox(fieldName: "Phone Number")],
+          );
+        },
+      );
+    } else if (!emailCntrl.text.contains('@') &&
+        !emailCntrl.text.contains(".")) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [InfoBox(fieldName: "Email ID")],
+          );
+        },
+      );
+    } else {
+      Contact addedContact = Contact(
+        id: widget.contactLength + 1,
+        firstName: firstNameCntrl.text,
+        lastName: lastNameCntrl.text,
+        phoneNumber: phoneNumberCntrl.text,
+        emailId: emailCntrl.text,
+        isFav: icon == isFavIcon ? true : false,
+      );
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            actions: [ActionLoader()],
+          );
+        },
+      );
+      Timer(
+        const Duration(seconds: 2),
+        () {
+          widget.onAdd(addedContact);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        },
+      );
+    }
   }
 }
