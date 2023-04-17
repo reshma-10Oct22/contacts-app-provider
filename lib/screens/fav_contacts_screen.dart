@@ -3,7 +3,7 @@ import '../components/contact_card.dart';
 import '../model/contact.dart';
 import 'detail_screen.dart';
 
-class FavContactsScreen extends StatefulWidget {
+class FavContactsScreen extends StatelessWidget {
   final List<Contact> favContactsList;
   final void Function(Contact) onEdit;
   const FavContactsScreen({
@@ -13,35 +13,35 @@ class FavContactsScreen extends StatefulWidget {
   });
 
   @override
-  State<FavContactsScreen> createState() => _FavContactsScreenState();
-}
-
-class _FavContactsScreenState extends State<FavContactsScreen> {
-  @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.favContactsList.length,
-      padding: const EdgeInsets.all(16),
-      itemBuilder: (context, index) {
-        return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return DetailScreen(
-                      contact: widget.favContactsList[index],
-                      onEdit: widget.onEdit,
-                    );
-                  },
+    return favContactsList.isEmpty
+        ? const Center(
+            child: Text("No contacts added in favourites"),
+          )
+        : ListView.builder(
+            itemCount: favContactsList.length,
+            padding: const EdgeInsets.all(16),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return DetailScreen(
+                          contact: favContactsList[index],
+                          onEdit: onEdit,
+                        );
+                      },
+                    ),
+                  );
+                },
+                child: ContactCard(
+                  contact: favContactsList[index],
+                  onEdit: onEdit,
                 ),
               );
             },
-            child: ContactCard(
-              contact: widget.favContactsList[index],
-              onEdit: widget.onEdit,
-            ));
-      },
-    );
+          );
   }
 }
