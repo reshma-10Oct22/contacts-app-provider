@@ -3,7 +3,7 @@ import 'contact.dart';
 class ContactService {
   List<Contact> contactList = [];
 
-  void addContact() {
+  List<Contact> addContact() {
     Contact contact1 = Contact(
       id: 1,
       firstName: "Reshma",
@@ -90,6 +90,7 @@ class ContactService {
       contact9,
       contact10,
     ]);
+    return contactList;
   }
 
   List<Contact> getContactList() {
