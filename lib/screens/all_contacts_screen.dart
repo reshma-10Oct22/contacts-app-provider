@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../model/contact.dart';
 import 'detail_screen.dart';
 
-class AllContactScreen extends StatefulWidget {
+class AllContactScreen extends StatelessWidget {
   final List<Contact> allContactList;
   final void Function(Contact) onEdit;
   const AllContactScreen({
@@ -13,15 +13,9 @@ class AllContactScreen extends StatefulWidget {
   });
 
   @override
-  State<AllContactScreen> createState() => _AllContactScreenState();
-}
-
-class _AllContactScreenState extends State<AllContactScreen> {
-  @override
   Widget build(BuildContext context) {
-    print(widget.allContactList.length);
     return ListView.builder(
-      itemCount: widget.allContactList.length,
+      itemCount: allContactList.length,
       padding: const EdgeInsets.all(16),
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -31,16 +25,16 @@ class _AllContactScreenState extends State<AllContactScreen> {
               MaterialPageRoute(
                 builder: (context) {
                   return DetailScreen(
-                    contact: widget.allContactList[index],
-                    onEdit: widget.onEdit,
+                    contact: allContactList[index],
+                    onEdit: onEdit,
                   );
                 },
               ),
             );
           },
           child: ContactCard(
-            contact: widget.allContactList[index],
-            onEdit: widget.onEdit,
+            contact: allContactList[index],
+            onEdit: onEdit,
           ),
         );
       },
