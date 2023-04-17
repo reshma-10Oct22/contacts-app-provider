@@ -29,9 +29,9 @@ class _BodyScreenState extends State<BodyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("main build");
     final tabIndexProvider =
         Provider.of<TabIndexProviderClass>(context, listen: false);
-    print("main build ${tabIndexProvider.tabIndex}");
     return Scaffold(
       appBar: AppBar(
         title: const Text("Contacts App"),
@@ -56,23 +56,16 @@ class _BodyScreenState extends State<BodyScreen> {
             currentIndex: value.tabIndex,
             selectedItemColor: Colors.blue,
             unselectedItemColor: Colors.black,
-            items: [
+            onTap: (newTabIndex) {
+              value.setTabIndex(newTabIndex);
+            },
+            items: const [
               BottomNavigationBarItem(
-                icon: GestureDetector(
-                  child: const Icon(Icons.star),
-                  onTap: () {
-                    value.setTabIndex(0);
-                  },
-                ),
+                icon: Icon(Icons.star),
                 label: "Favourites",
               ),
               BottomNavigationBarItem(
-                icon: GestureDetector(
-                  child: const Icon(Icons.contacts),
-                  onTap: () {
-                    value.setTabIndex(1);
-                  },
-                ),
+                icon: Icon(Icons.contacts),
                 label: "Contacts",
               ),
             ],
