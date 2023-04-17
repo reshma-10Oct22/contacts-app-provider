@@ -56,11 +56,14 @@ class _DetailScreenState extends State<DetailScreen> {
                     child: icon,
                     onTap: () {
                       if (icon == isNotFavIcon) {
-                        icon = isFavIcon;
+                        setState(() {
+                          icon = isFavIcon;
+                        });
                       } else {
-                        icon = isNotFavIcon;
+                        setState(() {
+                          icon = isNotFavIcon;
+                        });
                       }
-                      setState(() {});
                     },
                   ),
                   TextButton(
@@ -161,8 +164,7 @@ class _DetailScreenState extends State<DetailScreen> {
         },
       );
     } else if (phoneNumberCntrl.text.length != 10 &&
-        !emailCntrl.text.contains('@') &&
-        !emailCntrl.text.contains(".")) {
+        !(emailCntrl.text.contains('@') && emailCntrl.text.contains("."))) {
       showDialog(
         context: context,
         builder: (context) {
@@ -180,8 +182,8 @@ class _DetailScreenState extends State<DetailScreen> {
           );
         },
       );
-    } else if (!emailCntrl.text.contains('@') &&
-        !emailCntrl.text.contains(".")) {
+    } else if (!(emailCntrl.text.contains('@') &&
+        emailCntrl.text.contains("."))) {
       showDialog(
         context: context,
         builder: (context) {
