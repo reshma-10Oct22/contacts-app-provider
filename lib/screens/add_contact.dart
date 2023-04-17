@@ -50,11 +50,14 @@ class _AddContactScreenState extends State<AddContactScreen> {
                     child: icon,
                     onTap: () {
                       if (icon == isNotFavIcon) {
-                        icon = isFavIcon;
+                        setState(() {
+                          icon = isFavIcon;
+                        });
                       } else {
-                        icon = isNotFavIcon;
+                        setState(() {
+                          icon = isNotFavIcon;
+                        });
                       }
-                      setState(() {});
                     },
                   ),
                   TextButton(
@@ -135,8 +138,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
         },
       );
     } else if (phoneNumberCntrl.text.length != 10 &&
-        !emailCntrl.text.contains('@') &&
-        !emailCntrl.text.contains(".")) {
+        !(emailCntrl.text.contains('@') && emailCntrl.text.contains("."))) {
       showDialog(
         context: context,
         builder: (context) {
@@ -154,8 +156,8 @@ class _AddContactScreenState extends State<AddContactScreen> {
           );
         },
       );
-    } else if (!emailCntrl.text.contains('@') &&
-        !emailCntrl.text.contains(".")) {
+    } else if (!(emailCntrl.text.contains('@') &&
+        emailCntrl.text.contains("."))) {
       showDialog(
         context: context,
         builder: (context) {
