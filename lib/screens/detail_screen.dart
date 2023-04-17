@@ -1,9 +1,10 @@
 import 'dart:async';
-
 import 'package:contactsapp_provider/components/action_loader.dart';
 import 'package:contactsapp_provider/components/info_box.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../model/contact.dart';
+import '../providers/contact_list_provider.dart';
 
 class DetailScreen extends StatefulWidget {
   final Contact contact;
@@ -39,6 +40,8 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final contactListProvider =
+        Provider.of<ContactListProviderClass>(context, listen: false);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
