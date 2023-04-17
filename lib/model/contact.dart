@@ -21,6 +21,6 @@ class Contact {
 
   @override
   String toString() {
-    return "$id) $getFullName $phoneNumber $emailId $isFav";
+    return "$id) ${getFullName()} $phoneNumber $emailId $isFav";
   }
 }
