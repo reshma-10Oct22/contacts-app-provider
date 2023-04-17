@@ -1,3 +1,4 @@
+import 'package:contactsapp_provider/providers/contact_list_provider.dart';
 import 'package:contactsapp_provider/providers/tab_index_provider.dart';
 import 'package:contactsapp_provider/screens/all_contacts_screen.dart';
 import 'package:contactsapp_provider/screens/fav_contacts_screen.dart';
@@ -13,8 +14,15 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (_) => TabIndexProviderClass(),
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (_) => TabIndexProviderClass(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ContactListProviderClass(),
+          )
+        ],
         child: const MaterialApp(
           title: 'Contacts App',
           home: MyHomePage(title: "Contacts App"),
