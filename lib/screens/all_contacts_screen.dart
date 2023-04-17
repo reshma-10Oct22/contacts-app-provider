@@ -14,30 +14,35 @@ class AllContactScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: allContactList.length,
-      padding: const EdgeInsets.all(16),
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return DetailScreen(
-                    contact: allContactList[index],
-                    onEdit: onEdit,
+    print(allContactList.length);
+    return allContactList.isEmpty
+        ? const Center(
+            child: Text("No contacts, click + to add contact"),
+          )
+        : ListView.builder(
+            itemCount: allContactList.length,
+            padding: const EdgeInsets.all(16),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return DetailScreen(
+                          contact: allContactList[index],
+                          onEdit: onEdit,
+                        );
+                      },
+                    ),
                   );
                 },
-              ),
-            );
-          },
-          child: ContactCard(
-            contact: allContactList[index],
-            onEdit: onEdit,
-          ),
-        );
-      },
-    );
+                child: ContactCard(
+                  contact: allContactList[index],
+                  onEdit: onEdit,
+                ),
+              );
+            },
+          );
   }
 }
