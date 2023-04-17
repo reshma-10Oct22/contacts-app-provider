@@ -14,6 +14,7 @@ class FavContactsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(favContactsList.length);
     return favContactsList.isEmpty
         ? const Center(
             child: Text("No contacts added in favourites"),
