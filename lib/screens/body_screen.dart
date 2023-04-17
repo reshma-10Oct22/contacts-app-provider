@@ -1,49 +1,45 @@
+import 'package:contactsapp_provider/providers/contact_list_provider.dart';
 import 'package:contactsapp_provider/providers/tab_index_provider.dart';
 import 'package:contactsapp_provider/screens/add_contact.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../model/contact.dart';
+import '../components/contact_card.dart';
 import '../model/service.dart';
 import 'all_contacts_screen.dart';
+import 'detail_screen.dart';
 import 'fav_contacts_screen.dart';
 
 class BodyScreen extends StatefulWidget {
   const BodyScreen({super.key});
-
   @override
   State<BodyScreen> createState() => _BodyScreenState();
 }
 
 class _BodyScreenState extends State<BodyScreen> {
-  List<Contact> allContactList = [];
-  List<Contact> favContactsList = [];
-  List<Contact> otherContactList = [];
   ContactService contactService = ContactService();
-  @override
-  void initState() {
-    super.initState();
-    contactService.addContact();
-    allContactList = contactService.getContactList();
-    _getContacts();
-  }
 
   @override
   Widget build(BuildContext context) {
     print("main build");
-    final tabIndexProvider =
-        Provider.of<TabIndexProviderClass>(context, listen: false);
+    final contactListProvider =
+        Provider.of<ContactListProviderClass>(context, listen: false);
+    contactListProvider.postContacts(); //hardcoding the contacts
+    contactListProvider.updateContact(); //separating them as fav and non-fav
     return Scaffold(
       appBar: AppBar(
         title: const Text("Contacts App"),
       ),
-      body: returnBodyWidget(),
+      body: returnBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(
             builder: (context) {
               return AddContactScreen(
-                contactLength: allContactList.length,
-                onAdd: onAdd,
+                contactLength: contactListProvider.allContactList.length,
+                onAdd: (contact) {
+                  contactListProvider.addContact(contact);
+                  contactListProvider.updateContact();
+                },
               );
             },
           ));
@@ -75,60 +71,79 @@ class _BodyScreenState extends State<BodyScreen> {
     );
   }
 
-  Widget returnBodyWidget() {
+  Widget returnBody() {
     return Consumer<TabIndexProviderClass>(
       builder: (context, value, child) {
         if (value.tabIndex == 0) {
-          return FavContactsScreen(
-              favContactsList: favContactsList, onEdit: _onEdit);
+          return Consumer<ContactListProviderClass>(
+            builder: (context, value, child) {
+              return value.favContactList.isEmpty
+                  ? const Center(
+                      child: Text("No contacts added in favourites"),
+                    )
+                  : ListView.builder(
+                      itemCount: value.favContactList.length,
+                      padding: const EdgeInsets.all(16),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return DetailScreen(
+                                    contact: value.favContactList[index],
+                                    onEdit: value.editContact,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: ContactCard(
+                            contact: value.favContactList[index],
+                            onEdit: value.editContact,
+                          ),
+                        );
+                      },
+                    );
+            },
+          );
         } else {
-          return AllContactScreen(
-            allContactList: allContactList,
-            onEdit: _onEdit,
+          return Consumer<ContactListProviderClass>(
+            builder: (context, value, child) {
+              return value.allContactList.isEmpty
+                  ? const Center(
+                      child: Text("No contacts, click + to add contact"),
+                    )
+                  : ListView.builder(
+                      itemCount: value.allContactList.length,
+                      padding: const EdgeInsets.all(16),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return DetailScreen(
+                                    contact: value.allContactList[index],
+                                    onEdit: value.editContact,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: ContactCard(
+                            contact: value.allContactList[index],
+                            onEdit: value.editContact,
+                          ),
+                        );
+                      },
+                    );
+            },
           );
         }
       },
     );
-  }
-
-  void onAdd(Contact addedContact) {
-    setState(() {
-      allContactList.add(addedContact);
-      favContactsList.clear();
-      otherContactList.clear();
-      _getContacts();
-    });
-  }
-
-  void _getContacts() {
-    for (Contact contact in allContactList) {
-      if (contact.isFav!) {
-        favContactsList.add(contact);
-      } else {
-        favContactsList.remove(contact);
-        otherContactList.add(contact);
-      }
-    }
-    allContactList.clear();
-    allContactList.addAll(favContactsList);
-    allContactList.addAll(otherContactList);
-  }
-
-  void _onEdit(Contact updatedContact) {
-    int id = updatedContact.id;
-    for (Contact contact in allContactList) {
-      if (id == contact.id) {
-        contact.firstName = updatedContact.firstName;
-        contact.lastName = updatedContact.lastName;
-        contact.phoneNumber = updatedContact.phoneNumber;
-        contact.emailId = updatedContact.emailId;
-        contact.isFav = updatedContact.isFav;
-      }
-    }
-    setState(() {
-      favContactsList.clear();
-      otherContactList.clear();
-      _getContacts();
-    });
   }
 }
