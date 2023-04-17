@@ -1,5 +1,7 @@
+import 'package:contactsapp_provider/providers/tab_index_provider.dart';
 import 'package:contactsapp_provider/screens/add_contact.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../model/contact.dart';
 import '../model/service.dart';
 import 'all_contacts_screen.dart';
@@ -13,10 +15,8 @@ class BodyScreen extends StatefulWidget {
 }
 
 class _BodyScreenState extends State<BodyScreen> {
-  late Widget bodyWidget;
-  int tabIndex = 1;
   List<Contact> allContactList = [];
-  List<Contact> favContactList = [];
+  List<Contact> favContactsList = [];
   List<Contact> otherContactList = [];
   ContactService contactService = ContactService();
   @override
@@ -25,14 +25,13 @@ class _BodyScreenState extends State<BodyScreen> {
     contactService.addContact();
     allContactList = contactService.getContactList();
     _getContacts();
-    bodyWidget = AllContactScreen(
-      allContactList: allContactList,
-      onEdit: _onEdit,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final tabIndexProvider =
+        Provider.of<TabIndexProviderClass>(context, listen: false);
+    print("main build ${tabIndexProvider.tabIndex}");
     return Scaffold(
       appBar: AppBar(
         title: const Text("Contacts App"),
@@ -51,76 +50,74 @@ class _BodyScreenState extends State<BodyScreen> {
         },
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: tabIndex,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.black,
-        items: [
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-              child: const Icon(Icons.star),
-              onTap: () {
-                tabIndex = 0;
-                print(tabIndex);
-
-                setState(() {});
-              },
-            ),
-            label: "Favourites",
-          ),
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-              child: const Icon(Icons.contacts),
-              onTap: () {
-                tabIndex = 1;
-                print(tabIndex);
-
-                setState(() {});
-              },
-            ),
-            label: "Contacts",
-          ),
-        ],
+      bottomNavigationBar: Consumer<TabIndexProviderClass>(
+        builder: (context, value, child) {
+          return BottomNavigationBar(
+            currentIndex: value.tabIndex,
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.black,
+            items: [
+              BottomNavigationBarItem(
+                icon: GestureDetector(
+                  child: const Icon(Icons.star),
+                  onTap: () {
+                    value.setTabIndex(0);
+                  },
+                ),
+                label: "Favourites",
+              ),
+              BottomNavigationBarItem(
+                icon: GestureDetector(
+                  child: const Icon(Icons.contacts),
+                  onTap: () {
+                    value.setTabIndex(1);
+                  },
+                ),
+                label: "Contacts",
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
   Widget returnBodyWidget() {
-    if (tabIndex == 0) {
-      bodyWidget = FavContactsScreen(
-        favContactsList: favContactList,
-        onEdit: _onEdit,
-      );
-    } else {
-      bodyWidget = AllContactScreen(
-        allContactList: allContactList,
-        onEdit: _onEdit,
-      );
-    }
-    setState(() {});
-    return bodyWidget;
+    return Consumer<TabIndexProviderClass>(
+      builder: (context, value, child) {
+        if (value.tabIndex == 0) {
+          return FavContactsScreen(
+              favContactsList: favContactsList, onEdit: _onEdit);
+        } else {
+          return AllContactScreen(
+            allContactList: allContactList,
+            onEdit: _onEdit,
+          );
+        }
+      },
+    );
   }
 
   void onAdd(Contact addedContact) {
-    allContactList.add(addedContact);
-    favContactList.clear();
-    otherContactList.clear();
-    _getContacts();
-
-    setState(() {});
+    setState(() {
+      allContactList.add(addedContact);
+      favContactsList.clear();
+      otherContactList.clear();
+      _getContacts();
+    });
   }
 
   void _getContacts() {
     for (Contact contact in allContactList) {
       if (contact.isFav!) {
-        favContactList.add(contact);
+        favContactsList.add(contact);
       } else {
-        favContactList.remove(contact);
+        favContactsList.remove(contact);
         otherContactList.add(contact);
       }
     }
     allContactList.clear();
-    allContactList.addAll(favContactList);
+    allContactList.addAll(favContactsList);
     allContactList.addAll(otherContactList);
   }
 
@@ -135,9 +132,10 @@ class _BodyScreenState extends State<BodyScreen> {
         contact.isFav = updatedContact.isFav;
       }
     }
-    favContactList.clear();
-    otherContactList.clear();
-    _getContacts();
-    setState(() {});
+    setState(() {
+      favContactsList.clear();
+      otherContactList.clear();
+      _getContacts();
+    });
   }
 }
