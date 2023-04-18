@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:contactsapp_provider/components/action_loader.dart';
 import 'package:contactsapp_provider/components/info_box.dart';
+import 'package:contactsapp_provider/providers/fav_icon_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../model/contact.dart';
-import '../providers/contact_list_provider.dart';
 
 class DetailScreen extends StatefulWidget {
   final Contact contact;
@@ -24,24 +24,20 @@ class _DetailScreenState extends State<DetailScreen> {
   TextEditingController lastNameCntrl = TextEditingController();
   TextEditingController phoneNumberCntrl = TextEditingController();
   TextEditingController emailCntrl = TextEditingController();
-  Icon isNotFavIcon = const Icon(Icons.favorite_border);
-  Icon isFavIcon = const Icon(Icons.favorite);
-  late Icon icon;
+  late bool isFav;
 
   @override
   void initState() {
     super.initState();
-    icon = widget.contact.isFav! ? isFavIcon : isNotFavIcon;
     firstNameCntrl.text = widget.contact.firstName;
     lastNameCntrl.text = widget.contact.lastName;
     phoneNumberCntrl.text = widget.contact.phoneNumber;
     emailCntrl.text = widget.contact.emailId;
+    isFav = widget.contact.isFav!;
   }
 
   @override
   Widget build(BuildContext context) {
-    final contactListProvider =
-        Provider.of<ContactListProviderClass>(context, listen: false);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -55,18 +51,22 @@ class _DetailScreenState extends State<DetailScreen> {
             child: Center(
               child: Row(
                 children: [
-                  GestureDetector(
-                    child: icon,
-                    onTap: () {
-                      if (icon == isNotFavIcon) {
-                        setState(() {
-                          icon = isFavIcon;
-                        });
-                      } else {
-                        setState(() {
-                          icon = isNotFavIcon;
-                        });
-                      }
+                  Consumer<FavIconProviderClass>(
+                    builder: (context, value, child) {
+                      value.setFavIcon(isFav);
+
+                      return GestureDetector(
+                        onTap: () {
+                          if (isFav) {
+                            isFav = false;
+                          } else {
+                            isFav = true;
+                          }
+
+                          value.setFavIcon(isFav);
+                        },
+                        child: value.favIcon,
+                      );
                     },
                   ),
                   TextButton(
@@ -202,7 +202,7 @@ class _DetailScreenState extends State<DetailScreen> {
         lastName: lastNameCntrl.text,
         phoneNumber: phoneNumberCntrl.text,
         emailId: emailCntrl.text,
-        isFav: icon == isFavIcon ? true : false,
+        isFav: isFav,
       );
       showDialog(
         context: context,
