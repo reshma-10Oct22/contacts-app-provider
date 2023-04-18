@@ -112,6 +112,7 @@ class ContactListProviderClass with ChangeNotifier {
     _allContactList.clear();
     _allContactList.addAll(_favContactList);
     _allContactList.addAll(_otherContactList);
+    notifyListeners();
   }
 
   void addContact(Contact contact) {
@@ -119,6 +120,7 @@ class ContactListProviderClass with ChangeNotifier {
     _favContactList.clear();
     _otherContactList.clear();
     updateContact();
+    notifyListeners();
   }
 
   void editContact(Contact updatedContact) {
@@ -134,5 +136,6 @@ class ContactListProviderClass with ChangeNotifier {
     _favContactList.clear();
     _otherContactList.clear();
     updateContact();
+    notifyListeners();
   }
 }
