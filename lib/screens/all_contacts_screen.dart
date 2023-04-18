@@ -14,7 +14,6 @@ class AllContactScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(allContactList.length);
     return allContactList.isEmpty
         ? const Center(
             child: Text("No contacts, click + to add contact"),
