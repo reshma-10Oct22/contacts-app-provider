@@ -5,18 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../components/contact_card.dart';
 import '../model/service.dart';
-import 'all_contacts_screen.dart';
 import 'detail_screen.dart';
-import 'fav_contacts_screen.dart';
 
-class BodyScreen extends StatefulWidget {
-  const BodyScreen({super.key});
-  @override
-  State<BodyScreen> createState() => _BodyScreenState();
-}
-
-class _BodyScreenState extends State<BodyScreen> {
-  ContactService contactService = ContactService();
+class BodyScreen extends StatelessWidget {
+  BodyScreen({super.key});
+  final ContactService contactService = ContactService();
 
   @override
   Widget build(BuildContext context) {
