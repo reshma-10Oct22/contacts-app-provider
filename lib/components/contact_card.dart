@@ -38,7 +38,6 @@ class _ContactCardState extends State<ContactCard> {
                     isFav: widget.contact.isFav,
                   );
                   widget.onEdit(updatedContact);
-                  setState(() {});
                 },
               ),
               const SizedBox(width: 20),
