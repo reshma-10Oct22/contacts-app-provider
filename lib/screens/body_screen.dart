@@ -8,8 +8,7 @@ import '../model/service.dart';
 import 'detail_screen.dart';
 
 class BodyScreen extends StatelessWidget {
-  BodyScreen({super.key});
-  final ContactService contactService = ContactService();
+  const BodyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

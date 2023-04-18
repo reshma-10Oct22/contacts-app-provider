@@ -6,7 +6,6 @@ class ContactListProviderClass with ChangeNotifier {
   List<Contact> _allContactList = [];
   List<Contact> _favContactList = [];
   List<Contact> _otherContactList = [];
-  ContactService contactService = ContactService();
 
   List<Contact> get allContactList => _allContactList;
   List<Contact> get favContactList => _favContactList;
