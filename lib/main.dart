@@ -1,4 +1,5 @@
 import 'package:contactsapp_provider/providers/contact_list_provider.dart';
+import 'package:contactsapp_provider/providers/fav_icon_provider.dart';
 import 'package:contactsapp_provider/providers/tab_index_provider.dart';
 import 'package:contactsapp_provider/screens/all_contacts_screen.dart';
 import 'package:contactsapp_provider/screens/fav_contacts_screen.dart';
@@ -21,7 +22,10 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider(
             create: (_) => ContactListProviderClass(),
-          )
+          ),
+          ChangeNotifierProvider(
+            create: (_) => FavIconProviderClass(),
+          ),
         ],
         child: const MaterialApp(
           title: 'Contacts App',
