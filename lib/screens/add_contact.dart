@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:contactsapp_provider/providers/fav_icon_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../components/action_loader.dart';
@@ -6,33 +7,24 @@ import '../components/info_box.dart';
 import '../model/contact.dart';
 import '../providers/contact_list_provider.dart';
 
-class AddContactScreen extends StatefulWidget {
+class AddContactScreen extends StatelessWidget {
   final int contactLength;
   final void Function(Contact) onAdd;
-  const AddContactScreen({
+  AddContactScreen({
     super.key,
     required this.contactLength,
     required this.onAdd,
   });
 
-  @override
-  State<AddContactScreen> createState() => _AddContactScreenState();
-}
+  final TextEditingController firstNameCntrl = TextEditingController();
 
-class _AddContactScreenState extends State<AddContactScreen> {
-  Icon isNotFavIcon = const Icon(Icons.favorite_border);
-  Icon isFavIcon = const Icon(Icons.favorite);
-  late Icon icon;
-  TextEditingController firstNameCntrl = TextEditingController();
-  TextEditingController lastNameCntrl = TextEditingController();
-  TextEditingController phoneNumberCntrl = TextEditingController();
-  TextEditingController emailCntrl = TextEditingController();
+  final TextEditingController lastNameCntrl = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    icon = isNotFavIcon;
-  }
+  final TextEditingController phoneNumberCntrl = TextEditingController();
+
+  final TextEditingController emailCntrl = TextEditingController();
+
+  bool isFav = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,18 +41,20 @@ class _AddContactScreenState extends State<AddContactScreen> {
             child: Center(
               child: Row(
                 children: [
-                  GestureDetector(
-                    child: icon,
-                    onTap: () {
-                      if (icon == isNotFavIcon) {
-                        setState(() {
-                          icon = isFavIcon;
-                        });
-                      } else {
-                        setState(() {
-                          icon = isNotFavIcon;
-                        });
-                      }
+                  Consumer<FavIconProviderClass>(
+                    builder: (context, value, child) {
+                      value.setFavIcon(isFav);
+                      return GestureDetector(
+                        child: value.favIcon,
+                        onTap: () {
+                          if (isFav) {
+                            isFav = false;
+                          } else {
+                            isFav = true;
+                          }
+                          value.setFavIcon(isFav);
+                        },
+                      );
                     },
                   ),
                   TextButton(
@@ -119,7 +113,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                           lastName: lastNameCntrl.text,
                           phoneNumber: phoneNumberCntrl.text,
                           emailId: emailCntrl.text,
-                          isFav: icon == isFavIcon ? true : false,
+                          isFav: isFav,
                         );
                         showDialog(
                           context: context,
@@ -199,75 +193,4 @@ class _AddContactScreenState extends State<AddContactScreen> {
       ),
     );
   }
-
-  // void onAddContact() {
-  //   if (firstNameCntrl.text.isEmpty &&
-  //       phoneNumberCntrl.text.isEmpty &&
-  //       emailCntrl.text.isEmpty) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return const AlertDialog(
-  //           actions: [
-  //             InfoBox(fieldName: "Contact, fields are empty"),
-  //           ],
-  //         );
-  //       },
-  //     );
-  //   } else if (phoneNumberCntrl.text.length != 10 &&
-  //       !(emailCntrl.text.contains('@') && emailCntrl.text.contains("."))) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return const AlertDialog(
-  //           actions: [InfoBox(fieldName: "Phone Number and Email ID")],
-  //         );
-  //       },
-  //     );
-  //   } else if (phoneNumberCntrl.text.length != 10) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return const AlertDialog(
-  //           actions: [InfoBox(fieldName: "Phone Number")],
-  //         );
-  //       },
-  //     );
-  //   } else if (!(emailCntrl.text.contains('@') &&
-  //       emailCntrl.text.contains("."))) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return const AlertDialog(
-  //           actions: [InfoBox(fieldName: "Email ID")],
-  //         );
-  //       },
-  //     );
-  //   } else {
-  //     Contact addedContact = Contact(
-  //       id: widget.contactLength + 1,
-  //       firstName: firstNameCntrl.text,
-  //       lastName: lastNameCntrl.text,
-  //       phoneNumber: phoneNumberCntrl.text,
-  //       emailId: emailCntrl.text,
-  //       isFav: icon == isFavIcon ? true : false,
-  //     );
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return const AlertDialog(
-  //           actions: [ActionLoader()],
-  //         );
-  //       },
-  //     );
-  //     Timer(
-  //       const Duration(seconds: 2),
-  //       () {
-  //         widget.onAdd(addedContact);
-  //         Navigator.pop(context);
-  //         Navigator.pop(context);
-  //       },
-  //     );
-  //   }
-  // }
 }
