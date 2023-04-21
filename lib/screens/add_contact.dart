@@ -62,47 +62,69 @@ class AddContactScreen extends StatelessWidget {
                       if (firstNameCntrl.text.isEmpty &&
                           phoneNumberCntrl.text.isEmpty &&
                           emailCntrl.text.isEmpty) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const AlertDialog(
-                              actions: [
-                                InfoBox(fieldName: "Contact, fields are empty"),
-                              ],
+                        Future.delayed(
+                          Duration.zero,
+                          () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AlertDialog(
+                                  actions: [
+                                    InfoBox(
+                                        fieldName: "Contact, fields are empty"),
+                                  ],
+                                );
+                              },
                             );
                           },
                         );
                       } else if (phoneNumberCntrl.text.length != 10 &&
                           !(emailCntrl.text.contains('@') &&
                               emailCntrl.text.contains("."))) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const AlertDialog(
-                              actions: [
-                                InfoBox(fieldName: "Phone Number and Email ID")
-                              ],
+                        Future.delayed(
+                          Duration.zero,
+                          () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AlertDialog(
+                                  actions: [
+                                    InfoBox(
+                                        fieldName: "Phone Number and Email ID")
+                                  ],
+                                );
+                              },
                             );
                           },
                         );
                       } else if (phoneNumberCntrl.text.length != 10) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const AlertDialog(
-                              actions: [InfoBox(fieldName: "Phone Number")],
+                        Future.delayed(
+                          Duration.zero,
+                          () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AlertDialog(
+                                  actions: [InfoBox(fieldName: "Phone Number")],
+                                );
+                              },
                             );
                           },
                         );
                       } else if (!(emailCntrl.text.contains('@') &&
                           emailCntrl.text.contains("."))) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const AlertDialog(
-                              actions: [
-                                InfoBox(fieldName: "Email ID"),
-                              ],
+                        Future.delayed(
+                          Duration.zero,
+                          () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AlertDialog(
+                                  actions: [
+                                    InfoBox(fieldName: "Email ID"),
+                                  ],
+                                );
+                              },
                             );
                           },
                         );
@@ -115,14 +137,20 @@ class AddContactScreen extends StatelessWidget {
                           emailId: emailCntrl.text,
                           isFav: isFav,
                         );
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const AlertDialog(
-                              actions: [ActionLoader()],
+                        Future.delayed(
+                          Duration.zero,
+                          () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AlertDialog(
+                                  actions: [ActionLoader()],
+                                );
+                              },
                             );
                           },
                         );
+
                         Timer(
                           const Duration(seconds: 2),
                           () {
